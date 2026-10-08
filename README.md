@@ -1,3 +1,28 @@
+MTSAD Thresholding Techniques
+
+An undergraduate research project comparing thresholding techniques for multivariate time series anomaly detection (MTSAD).
+
+Background
+
+Anomaly detection models usually output a continuous anomaly score for each time step. A threshold then turns that score into a yes/no decision. A threshold that is too low causes false alarms, and one that is too high misses real anomalies. Choosing it well is one of the hardest parts of the pipeline, and no single method is known to work across all datasets.
+
+Goal
+
+This project compares existing thresholding methods on the same anomaly scores, so that the comparison is fair. It looks at how their performance changes across datasets, and it explores whether any method can be improved.
+
+Research questions
+RQ1: How do existing thresholding techniques perform, and how much does their ranking change across benchmark datasets?
+RQ2: Does any single technique perform consistently well across datasets?
+RQ3: Can existing techniques be improved, and in which direction (for example, combining EVT with channel-specific statistics, learned risk levels, or better drift handling)?
+
+
+
+
+
+
+
+
+
 ---
 ## 💭 First Step:
 run these two commands
