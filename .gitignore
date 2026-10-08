@@ -1,0 +1,59 @@
+# ============================================
+# WINDOWS
+# ============================================
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ============================================
+# PYTHON
+# ============================================
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# ============================================
+# SECRETS & ENVIRONMENT
+# ============================================
+.env
+.env.local
+.env.production
+*.pem
+*.key
+
+# ============================================
+# EDITORS & IDEs
+# ============================================
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# ============================================
+# GENERAL
+# ============================================
+*.log
+*.tmp
+*.zip
+*.tar.gz
