@@ -4,6 +4,7 @@ SPOT  (Siffer et al., 2017)
 import numpy as np
 import math
 from scipy.stats import genpareto
+from open_SMAP import load_smap_data as ld
 
 
 class SPOT:
@@ -92,5 +93,7 @@ class SPOT:
         return  flags_np, threshold_np
 
 
-spot = SPOT(q=1e-3).fit(init_data)
+first_1000 = ld()[:1000]
+stream = ld()[1000:]
+spot = SPOT(q=1e-3).fit(first_1000)
 flags, thresholds = spot.run(stream)
