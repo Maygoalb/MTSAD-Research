@@ -93,7 +93,8 @@ class SPOT:
         return  flags_np, threshold_np
 
 
-first_1000 = ld()[:1000]
-stream = ld()[1000:]
-spot = SPOT(q=1e-3).fit(first_1000)
-flags, thresholds = spot.run(stream)
+if __name__ == "__main__":
+    first_1000 = ld()[:1000]
+    stream = ld()[1000:]
+    spot = SPOT(q=1e-3).fit(first_1000)
+    flags, thresholds = spot.run(stream)
