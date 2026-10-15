@@ -94,8 +94,32 @@ class SPOT:
 
 
 if __name__ == "__main__":
-    data = ld()
-    first_1000 = data[:1000]
-    stream = data[1000:]
-    spot = SPOT(q=1e-3).fit(first_1000)
+   if __name__ == "__main__":
+    train_data = ld('SMAP_train.npy')      # normal data only, used for fit
+    stream = ld('SMAP_test.npy')           # the whole test column, used for run
+    labels_LD = ld('SMAP_test_label.npy')  # labels belong to the test file
+    labels = labels_LD                     # same length as stream, so no slicing
+
+    print("unique values in train:", np.unique(train_data).size)
+    print("train min/max:", train_data.min(), train_data.max())
+    print("train 98th percentile:", np.quantile(train_data, 0.98))
+    print("values above it:", (train_data > np.quantile(train_data, 0.98)).sum())
+    print("shapes:", stream.shape, labels.shape)
+
+    spot = SPOT(q=1e-3).fit(train_data)
     flags, thresholds = spot.run(stream)
+    labels = labels.astype(bool)
+
+    TP = np.sum(flags & labels)      # flagged, and a real anomaly
+    FP = np.sum(flags & ~labels)     # flagged, but normal (false alarm)
+    FN = np.sum(~flags & labels)     # not flagged, but a real anomaly (missed)
+    TN = np.sum(~flags & ~labels)    # not flagged, and normal
+
+    precision = TP / (TP + FP) if (TP + FP) else 0
+    recall    = TP / (TP + FN) if (TP + FN) else 0
+    f1        = 2 * precision * recall / (precision + recall) if (precision + recall) else 0
+    accuracy  = (TP + TN) / (TP + TN + FP + FN)
+
+    print(f"TP={TP} FP={FP} FN={FN} TN={TN}")
+    print(f"precision={precision:.3f} recall={recall:.3f} f1={f1:.3f} accuracy={accuracy:.3f}")
+    print(f"Flags: {flags.sum()}, threshold[0]: {thresholds[0]}, threshold[-1]: {thresholds[-1]}")
