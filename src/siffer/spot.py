@@ -94,32 +94,37 @@ class SPOT:
 
 
 if __name__ == "__main__":
-   if __name__ == "__main__":
-    train_data = ld('SMAP_train.npy')      # normal data only, used for fit
-    stream = ld('SMAP_test.npy')           # the whole test column, used for run
+    train_data = ld('SMAP_train.npy')      # normal data only
+    stream = ld('SMAP_test.npy')           # the whole test column
     labels_LD = ld('SMAP_test_label.npy')  # labels belong to the test file
-    labels = labels_LD                     # same length as stream, so no slicing
+    labels = labels_LD.astype(bool)
 
     print("unique values in train:", np.unique(train_data).size)
     print("train min/max:", train_data.min(), train_data.max())
-    print("train 98th percentile:", np.quantile(train_data, 0.98))
-    print("values above it:", (train_data > np.quantile(train_data, 0.98)).sum())
     print("shapes:", stream.shape, labels.shape)
+    print(f"stream >= 1.0: {np.sum(stream >= 1.0)}")
+    print(f"stream > 1.0:  {np.sum(stream > 1.0)}")
 
-    spot = SPOT(q=1e-3).fit(train_data)
-    flags, thresholds = spot.run(stream)
-    labels = labels.astype(bool)
+    # Setup A: fit on train, run on test (main setup)
+    # Setup B: fit on test, run on the same test data
+    setups = {"A: fit on train, run on test": train_data,
+              "B: fit on test, run on test": stream}
 
-    TP = np.sum(flags & labels)      # flagged, and a real anomaly
-    FP = np.sum(flags & ~labels)     # flagged, but normal (false alarm)
-    FN = np.sum(~flags & labels)     # not flagged, but a real anomaly (missed)
-    TN = np.sum(~flags & ~labels)    # not flagged, and normal
+    for name, fit_data in setups.items():
+        spot = SPOT(q=1e-3).fit(fit_data)
+        flags, thresholds = spot.run(stream)
 
-    precision = TP / (TP + FP) if (TP + FP) else 0
-    recall    = TP / (TP + FN) if (TP + FN) else 0
-    f1        = 2 * precision * recall / (precision + recall) if (precision + recall) else 0
-    accuracy  = (TP + TN) / (TP + TN + FP + FN)
+        TP = np.sum(flags & labels)
+        FP = np.sum(flags & ~labels)
+        FN = np.sum(~flags & labels)
+        TN = np.sum(~flags & ~labels)
 
-    print(f"TP={TP} FP={FP} FN={FN} TN={TN}")
-    print(f"precision={precision:.3f} recall={recall:.3f} f1={f1:.3f} accuracy={accuracy:.3f}")
-    print(f"Flags: {flags.sum()}, threshold[0]: {thresholds[0]}, threshold[-1]: {thresholds[-1]}")
+        precision = TP / (TP + FP) if (TP + FP) else 0
+        recall    = TP / (TP + FN) if (TP + FN) else 0
+        f1        = 2 * precision * recall / (precision + recall) if (precision + recall) else 0
+        accuracy  = (TP + TN) / (TP + TN + FP + FN)
+
+        print(f"\n{name}")
+        print(f"  flags={flags.sum()}  threshold[0]={thresholds[0]}  threshold[-1]={thresholds[-1]}")
+        print(f"  TP={TP} FP={FP} FN={FN} TN={TN}")
+        print(f"  precision={precision:.3f} recall={recall:.3f} f1={f1:.3f} accuracy={accuracy:.3f}")
