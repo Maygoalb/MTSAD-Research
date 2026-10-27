@@ -6,7 +6,7 @@ import sys
 parent_folder = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_folder)
 
-from SPOT import SPOT
+from spot import SPOT
 
 # Find the MSL folder
 folder = os.path.dirname(os.path.abspath(__file__))
