@@ -22,7 +22,7 @@ test = test[:, 0]
 labels = labels.astype(bool)
 
 # Train SPOT
-spot = SPOT(q=1e-3, level=0.98)
+spot = SPOT(q=0.005, level=0.98)
 spot.fit(train)
 
 # Detect anomalies
