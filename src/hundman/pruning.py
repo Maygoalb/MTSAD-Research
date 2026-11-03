@@ -75,8 +75,8 @@ def prune(errors, sequences, p=0.1):
 
     #  build the list L: the sorted maxes, then the highest normal error at the end
     L = []
-    for p in pairs:
-        L.append(p[0])
+    for pair in pairs:
+        L.append(pair[0])
     L.append(highest_normal_error(errors, sequences))
     # compute the drops d(i) = (L[i-1] - L[i]) / L[i-1] for i = 1 ... len(L) - 1
     drops = []
@@ -88,22 +88,18 @@ def prune(errors, sequences, p=0.1):
     #   My reading: find the LAST drop that is bigger than p.
     #   Every sequence above that drop stays flagged; the ones below it are dropped.
     #   If no drop is bigger than p, all sequences are dropped.
-    LatDrop = None
-    for d in drops:
-        if d > p:
-            LatDrop = d
-    flags = []
-    for i in range(0, errors):
-        if errors[i] > d:
-            flags.append(True)
-        else:
-            flags.append(False)
+    LatDrop = 0
+    for i in range(0, len(drops)):
+        if drops[i] > p:
+            LatDrop = i
+    # no gap bigger than p: nothing stays flagged
+    if LatDrop is None:
+        return []
+    kept = []
+    for i in range(0, LatDrop + 1):
+        kept.append(pairs[i][1])
+    return kept
 
-
-
-
-    # return the sequences that stay flagged
-    pass
 
 
 if __name__ == "__main__":
@@ -112,4 +108,4 @@ if __name__ == "__main__":
     sequences = [(1, 1), (3, 3)]
     # Expected: only (1, 1) stays flagged -> [(1, 1)]
     # call prune(errors, sequences, 0.1) and print the result
-    pass
+    print(prune(errors, sequences, 0.1))
