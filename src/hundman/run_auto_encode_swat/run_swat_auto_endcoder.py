@@ -7,6 +7,7 @@ import sys
 folder = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(folder))
 from ndt import run_ndt, flags_from_sequences
+from metrics import confusion_counts, precision_recall_f1
 
 
 # open auto encoder
@@ -59,3 +60,11 @@ flags = flags_from_sequences(results, len(scores))
 print(f"{len(results)} is the number of sequences found.")
 print(f"{flags.sum()} is how many windows were flagged.")
 print(f"{flags.mean()} is the share flagged.")
+
+
+# calculate F1 scores
+TP, FP, FN, TN = confusion_counts(flags, labels)
+precision, recall, f1 = precision_recall_f1(TP, FP, FN)
+
+print(f"TP={TP} FP={FP} FN={FN} TN={TN}")
+print(f"precision={precision:.3f} recall={recall:.3f} f1={f1:.3f}")
