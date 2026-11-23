@@ -3,9 +3,13 @@ import/ open and read from auto encoder socres and apply hundmand/NDT method on 
 """
 import numpy as np
 import os
+import sys
+folder = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(folder))
+from ndt import run_ndt, flags_from_sequences
+
 
 # open auto encoder
-folder = os.path.dirname(os.path.abspath(__file__))
 path = os.path.join(folder, "autoencoder_scores.npz")
 z = np.load(path, allow_pickle=True)
 
@@ -41,3 +45,17 @@ avg_score_normal= np.mean(scores[~ labels])
 print(f"avg normal scores: {avg_score_normal} avg attack scores: {avg_score_attack}")
 num_of_attacks =  labels.sum()
 print(f"number of attacks {num_of_attacks}")
+
+# run ndt on the it
+alpha = 0.5
+z_values = [1, 2, 3, 4, 5]
+window_size = 500
+step = 500
+p = 0.1
+
+results = run_ndt(scores, alpha, z_values, window_size, step, p)
+flags = flags_from_sequences(results, len(scores))
+
+print(f"{len(results)} is the number of sequences found.")
+print(f"{flags.sum()} is how many windows were flagged.")
+print(f"{flags.mean()} is the share flagged.")
