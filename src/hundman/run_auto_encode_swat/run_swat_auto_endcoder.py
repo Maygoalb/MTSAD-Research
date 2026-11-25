@@ -57,8 +57,8 @@ p = 0.1
 results = run_ndt(scores, alpha, z_values, window_size, step, p)
 flags = flags_from_sequences(results, len(scores))
 
-print(f"{len(results)} is the number of sequences found.")
-print(f"{flags.sum()} is how many windows were flagged.")
+print(f"{len(results)} is the number of sequences found.A run of points in a row that are above the threshold.")
+print(f"{flags.sum()} is how points were flagged. Flagged points Count every point inside the sequences.")
 print(f"{flags.mean()} is the share flagged.")
 
 
@@ -68,3 +68,12 @@ precision, recall, f1 = precision_recall_f1(TP, FP, FN)
 
 print(f"TP={TP} FP={FP} FN={FN} TN={TN}")
 print(f"precision={precision:.3f} recall={recall:.3f} f1={f1:.3f}")
+
+false_alarms = flags & ~labels     # flagged, but normal
+missed = ~flags & labels           # real attack, not flagged
+#print how many there are.
+print("false alarms:", false_alarms.sum())
+print("missed attacks:", missed.sum())
+# print the average score of each group.
+print("avg score of false alarms:", np.mean(scores[false_alarms]))
+print("avg score of missed attacks:", np.mean(scores[missed]))
